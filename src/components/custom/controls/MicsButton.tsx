@@ -89,6 +89,7 @@ const MicsButton = () => {
   }, [audioTrack, isMicOn]);
 
   const handleMicChange = async (deviceId: string) => {
+    if (!user?.id) return;
     setSelectedMic(deviceId);
     setMicPopoverOpen(false);
 
@@ -131,6 +132,7 @@ const MicsButton = () => {
   };
 
   const toggleMic = () => {
+    if (!user?.id) return;
     if (audioTrack) {
       const newState = !audioTrack.enabled;
       audioTrack.enabled = newState;

@@ -65,9 +65,11 @@ const CameraButton = () => {
   }, [videoDevices, selectedDeviceId]);
 
   const switchCamera = async (deviceId: string) => {
+    if (!user?.id) return;
+
     try {
       const newStream = await navigator.mediaDevices.getUserMedia({
-        video: true,
+        video: { deviceId: { exact: deviceId } },
         audio: true,
       });
 
@@ -88,6 +90,7 @@ const CameraButton = () => {
   };
 
   const handleToggleOff = () => {
+    if (!user?.id) return;
     if (videoTrack) {
       videoTrack.enabled = false;
       toggleCameraStore(user?.id, false);

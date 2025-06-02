@@ -53,6 +53,7 @@ const MeetPage = () => {
     socket: Socket,
     localStream: MediaStream,
   ) => {
+    if (!user?.id) return;
     const pc = new RTCPeerConnection(configuration);
     peerConnections.current[userId] = pc;
 
@@ -98,6 +99,7 @@ const MeetPage = () => {
 
   useEffect(() => {
     const initStream = async () => {
+      if (!user?.id) return;
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
           video: false,
@@ -162,8 +164,8 @@ const MeetPage = () => {
       // Then create connection
       const pc = setupPeerConnection(userId, socket, localStreamRef.current!);
 
-      const offer = await pc.createOffer();
-      await pc.setLocalDescription(offer);
+      const offer = await pc?.createOffer();
+      await pc?.setLocalDescription(offer);
 
       socket.emit("offer", {
         offer,
@@ -176,10 +178,10 @@ const MeetPage = () => {
       if (senderId === socket.id) return;
       const pc = setupPeerConnection(senderId, socket, localStreamRef.current!);
 
-      await pc.setRemoteDescription(new RTCSessionDescription(offer));
+      await pc?.setRemoteDescription(new RTCSessionDescription(offer));
 
-      const answer = await pc.createAnswer();
-      await pc.setLocalDescription(answer);
+      const answer = await pc?.createAnswer();
+      await pc?.setLocalDescription(answer);
 
       socket.emit("answer", {
         answer,
@@ -207,9 +209,7 @@ const MeetPage = () => {
     });
 
     socket.on("media-state-updated", ({ userId, micOn, cameraOn }) => {
-      useCallStore
-        .getState()
-        .updateParticipantMediaState(userId, { micOn, cameraOn });
+      useCallStore.getState().updateMediaState(userId, { micOn, cameraOn });
     });
 
     socket.on("user-left", ({ userId }) => {
