@@ -8,7 +8,7 @@ export const useSocket = () => {
 
   useEffect(() => {
     if (!socket) {
-      socket = io(import.meta.env.VITE_API_URL, {
+      socket = io(import.meta.env.VITE_BACKEND_URL, {
         transports: ["websocket"],
         reconnection: true,
       });
